@@ -51,7 +51,7 @@ private:
 
     QPixmap m_pixmap;
     int m_rangeValue = 30;
-    const int m_channels = 1;
+    const int m_channels = 2;
     float m_values[CHANNEL_MAX] = {0};
     float m_left[QMMP_VISUAL_NODE_SIZE];
     float m_right[QMMP_VISUAL_NODE_SIZE];
