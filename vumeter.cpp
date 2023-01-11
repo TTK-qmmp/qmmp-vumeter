@@ -26,7 +26,9 @@ VUMeter::~VUMeter()
 void VUMeter::start()
 {
     if(isVisible())
+    {
         m_timer->start();
+    }
 }
 
 void VUMeter::stop()
