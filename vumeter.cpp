@@ -11,7 +11,7 @@ VUMeter::VUMeter(QWidget *parent)
     setWindowTitle(tr("VU Meter Widget"));
 
     m_pixmap.load(":/data/vu");
-    setFixedSize(m_pixmap.size());
+    setMinimumSize(m_pixmap.size());
 
     m_timer = new QTimer(this);
     m_timer->setInterval(40);
@@ -64,8 +64,11 @@ void VUMeter::paintEvent(QPaintEvent *)
 {
     QPainter painter(this);
     painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    painter.fillRect(rect(), Qt::black);
 
-    painter.drawPixmap(rect(), m_pixmap);
+    const int w = (width() - m_pixmap.width()) / 2;
+    const int h = (height() - m_pixmap.height()) / 2;
+    painter.drawPixmap(w, h, m_pixmap);
 
     float value = 0;
     for(int c = 0; c < m_channels; ++c)
@@ -74,8 +77,8 @@ void VUMeter::paintEvent(QPaintEvent *)
     }
 
     constexpr int radius = 130;
-    const int x = m_pixmap.width() / 2;
-    const int y = m_pixmap.height() - 174 / 2;
+    const int x = w + m_pixmap.width() / 2;
+    const int y = h + m_pixmap.height() - 174 / 2;
     const float offset = M_PI * (value / (m_rangeValue * 2.5) - 0.75);
 
     painter.setPen(QPen(Qt::white, 2));
