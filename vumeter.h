@@ -21,7 +21,7 @@
 
 #include <qmmp/visual.h>
 
-#define CHANNEL_MAX    2
+#define MAX_CHANNELS    2
 
 /*!
  * @author Greedysky <greedysky@163.com>
@@ -52,7 +52,7 @@ private:
     QPixmap m_pixmap;
     int m_rangeValue = 30;
     const int m_channels = 2;
-    float m_values[CHANNEL_MAX] = {0};
+    float m_values[MAX_CHANNELS] = {0};
     float m_left[QMMP_VISUAL_NODE_SIZE];
     float m_right[QMMP_VISUAL_NODE_SIZE];
     QTimer *m_timer = nullptr;
