@@ -3,7 +3,7 @@
 #include <QMenu>
 #include <QTimer>
 #include <QPainter>
-#include <math.h>
+#include <qmath.h>
 
 static void actionChecked(QAction *action, int value, int data)
 {
