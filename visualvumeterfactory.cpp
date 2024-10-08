@@ -17,7 +17,11 @@ Visual *VisualVUMeterFactory::create(QWidget *parent)
     return new VUMeter(parent);
 }
 
+#if (QMMP_VERSION_INT < 0x10700) || (0x20000 <= QMMP_VERSION_INT && QMMP_VERSION_INT < 0x20200)
 QDialog *VisualVUMeterFactory::createConfigDialog(QWidget *parent)
+#else
+QDialog *VisualVUMeterFactory::createSettings(QWidget *parent)
+#endif
 {
     Q_UNUSED(parent);
     return nullptr;
