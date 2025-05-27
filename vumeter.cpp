@@ -3,15 +3,9 @@
 #include <QMenu>
 #include <QTimer>
 #include <QPainter>
+#include <QSettings>
 #include <qmath.h>
-
-static void actionChecked(QAction *action, int value, int data)
-{
-    action->setData(value);
-    action->setCheckable(true);
-    action->setChecked(data == value);
-}
-
+#include <qmmp/qmmp.h>
 
 VUMeter::VUMeter(QWidget *parent)
     : Visual(parent)
@@ -24,11 +18,9 @@ VUMeter::VUMeter(QWidget *parent)
     m_timer = new QTimer(this);
     m_timer->setInterval(40);
     connect(m_timer, SIGNAL(timeout()), SLOT(updateVisual()));
-}
 
-VUMeter::~VUMeter()
-{
-
+    createMenu();
+    readSettings();
 }
 
 void VUMeter::start()
@@ -44,6 +36,40 @@ void VUMeter::stop()
     m_timer->stop();
 }
 
+void VUMeter::readSettings()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+    QSettings settings;
+#else
+    QSettings settings(Qmmp::configFile(), QSettings::IniFormat);
+#endif
+    settings.beginGroup("VUMeter");
+    m_rangeValue = settings.value("range", 30).toInt();
+    settings.endGroup();
+
+    for(QAction *act : m_rangeActions->actions())
+    {
+        if(m_rangeValue == act->data().toInt())
+        {
+            act->setChecked(true);
+            break;
+        }
+    }
+}
+
+void VUMeter::writeSettings()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6,0,0)
+    QSettings settings;
+#else
+    QSettings settings(Qmmp::configFile(), QSettings::IniFormat);
+#endif
+    settings.beginGroup("VUMeter");
+    QAction *act = m_rangeActions->checkedAction();
+    settings.setValue("range", m_rangeValue = (act ? act->data().toInt() : 30));
+    settings.endGroup();
+}
+
 void VUMeter::updateVisual()
 {
     if(takeData(m_left, m_right))
@@ -51,11 +77,6 @@ void VUMeter::updateVisual()
         process(m_left, m_right);
         update();
     }
-}
-
-void VUMeter::rangeChanged(QAction *action)
-{
-    m_rangeValue = action->data().toInt();
 }
 
 void VUMeter::hideEvent(QHideEvent *)
@@ -95,20 +116,7 @@ void VUMeter::paintEvent(QPaintEvent *)
 
 void VUMeter::contextMenuEvent(QContextMenuEvent *)
 {
-    QMenu menu(this);
-
-    QMenu rangeMenu(tr("Range"), &menu);
-    actionChecked(rangeMenu.addAction(tr("30 DB")), 30, m_rangeValue);
-    actionChecked(rangeMenu.addAction(tr("50 DB")), 50, m_rangeValue);
-    actionChecked(rangeMenu.addAction(tr("70 DB")), 70, m_rangeValue);
-    actionChecked(rangeMenu.addAction(tr("90 DB")), 90, m_rangeValue);
-    actionChecked(rangeMenu.addAction(tr("110 DB")), 110, m_rangeValue);
-    actionChecked(rangeMenu.addAction(tr("130 DB")), 130, m_rangeValue);
-    actionChecked(rangeMenu.addAction(tr("150 DB")), 150, m_rangeValue);
-    actionChecked(rangeMenu.addAction(tr("170 DB")), 170, m_rangeValue);
-    connect(&rangeMenu, SIGNAL(triggered(QAction*)), this, SLOT(rangeChanged(QAction*)));
-    menu.addMenu(&rangeMenu);
-    menu.exec(QCursor::pos());
+    m_menu->exec(QCursor::pos());
 }
 
 void VUMeter::process(float *left, float *right)
@@ -138,5 +146,29 @@ void VUMeter::process(float *left, float *right)
         {
             m_values[i] = db;
         }
+    }
+}
+
+void VUMeter::createMenu()
+{
+    m_menu = new QMenu(this);
+    connect(m_menu, SIGNAL(triggered(QAction*)), SLOT(writeSettings()));
+
+    m_rangeActions = new QActionGroup(this);
+    m_rangeActions->setExclusive(true);
+    m_rangeActions->addAction(tr("30 DB"))->setData(30);
+    m_rangeActions->addAction(tr("50 DB"))->setData(50);
+    m_rangeActions->addAction(tr("70 DB"))->setData(70);
+    m_rangeActions->addAction(tr("90 DB"))->setData(90);
+    m_rangeActions->addAction(tr("110 DB"))->setData(110);
+    m_rangeActions->addAction(tr("130 DB"))->setData(130);
+    m_rangeActions->addAction(tr("150 DB"))->setData(150);
+    m_rangeActions->addAction(tr("170 DB"))->setData(170);
+
+    QMenu *rangeMenu = m_menu->addMenu(tr("Range"));
+    for(QAction *act : m_rangeActions->actions())
+    {
+        act->setCheckable(true);
+        rangeMenu->addAction(act);
     }
 }

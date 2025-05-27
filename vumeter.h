@@ -23,6 +23,9 @@
 
 #define MAX_CHANNELS    2
 
+class QMenu;
+class QActionGroup;
+
 /*!
  * @author Greedysky <greedysky@163.com>
  */
@@ -31,15 +34,15 @@ class VUMeter : public Visual
     Q_OBJECT
 public:
     explicit VUMeter(QWidget *parent = nullptr);
-    virtual ~VUMeter();
 
 public slots:
     virtual void start() override final;
     virtual void stop() override final;
 
 private slots:
+    void readSettings();
+    void writeSettings();
     void updateVisual();
-    void rangeChanged(QAction *action);
 
 private:
     virtual void hideEvent(QHideEvent *e) override final;
@@ -48,6 +51,7 @@ private:
     virtual void contextMenuEvent(QContextMenuEvent *e) override final;
 
     void process(float *left, float *right);
+    void createMenu();
 
     QPixmap m_pixmap;
     int m_rangeValue = 30;
@@ -56,6 +60,9 @@ private:
     float m_left[QMMP_VISUAL_NODE_SIZE];
     float m_right[QMMP_VISUAL_NODE_SIZE];
     QTimer *m_timer = nullptr;
+
+    QMenu *m_menu;
+    QActionGroup *m_rangeActions;
 
 };
 
