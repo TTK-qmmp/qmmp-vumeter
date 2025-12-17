@@ -1,5 +1,7 @@
 This is a plugin for Qmmp (1.6.0 or greater) visual.
 
+Based on [vumeter-plugin](https://github.com/audacious-media-player/audacious-plugins/tree/master/src/vumeter-qt).
+
 ![Image](https://github.com/TTK-qmmp/qmmp-vumeter/blob/master/image/vu.png?raw=true)
 
 The following packages are required, including development headers,

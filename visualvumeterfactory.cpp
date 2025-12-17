@@ -31,8 +31,9 @@ void VisualVUMeterFactory::showAbout(QWidget *parent)
 {
     QMessageBox::about(parent, tr("About VU Meter Visual Plugin"),
                        tr("Qmmp VU Meter Visual Plugin") + "\n" +
-                       tr("This plugin adds VU Meter visualization") + "\n" +
-                       tr("Written by: Greedysky <greedysky@163.com>"));
+                       tr("Written by: Greedysky <greedysky@163.com>") + "\n" +
+                       tr("Based on the source code from the vumeter-qt") + "\n" +
+                       tr("Written by Marc Sánchez Fauste (C) 2017-2019"));
 }
 
 QString VisualVUMeterFactory::translation() const
